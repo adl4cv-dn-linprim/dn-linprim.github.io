@@ -1,15 +1,8 @@
-# Nerfies
+# LinPrim w/ depth and normals supervision. This needs a better title tho
 
-This is the repository that contains source code for the [Nerfies website](https://nerfies.github.io).
+This is the repository that contains source code for the [Project website](https://dn-linprim.github.io).
 
-If you find Nerfies useful for your work please cite:
-```
-@article{park2021nerfies
-  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
-  title     = {Nerfies: Deformable Neural Radiance Fields},
-  journal   = {ICCV},
-  year      = {2021},
-}
+We thank the authors of [Nerfies](https://nerfies.github.io/) that kindly open sourced the template of this website. 
 ```
 
 # Website License
