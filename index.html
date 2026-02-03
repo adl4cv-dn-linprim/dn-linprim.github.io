@@ -31,16 +31,14 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">Lorem Ipsum Dolor Sit Amet</h1>
+          <h1 class="title is-1 publication-title">DN-LinPrim: Depth- and Normals-supervised LinPrim</h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Author Name<sup>1</sup>,</span>
-            <span class="author-block">Author Name<sup>2</sup>,</span>
-            <span class="author-block">Author Name<sup>1</sup></span>
+            <span class="author-block">Karl Freund,</span>
+            <span class="author-block">Miguel Trasobares</span>
           </div>
 
           <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup>1</sup>University Name,</span>
-            <span class="author-block"><sup>2</sup>Institution Name</span>
+            <span class="author-block">Technical University of Munich</span>
           </div>
 
           <div class="column has-text-centered">
@@ -51,12 +49,12 @@
                   <span>Paper</span>
                 </a>
               </span>
-              <span class="link-block">
-                <a href="TBD: Link to code repo" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
-                </a>
-              </span>
+<!--              <span class="link-block">-->
+<!--                <a href="TBD: Link to code repo" class="external-link button is-normal is-rounded is-dark">-->
+<!--                  <span class="icon"><i class="fab fa-github"></i></span>-->
+<!--                  <span>Code</span>-->
+<!--                </a>-->
+<!--              </span>-->
             </div>
           </div>
         </div>
@@ -100,18 +98,22 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Method Comparison</h2>
 
+    <div class="content has-text-justified">
+      <p>All results produced by training each model for 30k iterations at full resolution.</p>
+    </div>
+
     <!-- Scene Selector -->
     <div class="field is-horizontal" style="justify-content: center; margin-bottom: 1.5rem;">
       <div class="field-label is-normal">
-        <label class="label">Scene/View:</label>
+        <label class="label">View (Scene):</label>
       </div>
       <div class="field-body">
         <div class="field">
           <div class="control">
             <div class="select">
               <select id="scene-selector">
-                <option value="DSC00767">39f36da05b (DSC00767)</option>
-                <option value="DSC00784">39f36da05b (DSC00784)</option>
+                <option value="DSC00767">DSC00767 (39f36da05b)</option>
+                <option value="DSC00784">DSC00784 (39f36da05b)</option>
               </select>
             </div>
           </div>
@@ -179,27 +181,622 @@
       <div class="column is-full-width">
         <h2 class="title is-3">Results</h2>
         <div class="content has-text-justified">
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>
+            All experiments are run on full resolution (<code>r = 1</code>) and on the 30k iterations for all pipelines.
+            For the LinPrim and Our pipeline we use the found lambda values. Our pipeline runs the intersection depth rendering at the entry point.
+          </p>
         </div>
-        <div class="content has-text-centered">
-          <img src="./static/images/placeholder.png" alt="Results"/>
+
+        <!-- Full Resolution Results -->
+        <h3 class="title is-4">Full Resolution Results</h3>
+
+        <!-- Scene 39f36da05b -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene 39f36da05b</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>27.56</td>
+                  <td><span class="best-metric">0.857</span></td>
+                  <td>0.224</td>
+                  <td>0.084</td>
+                  <td>0.882</td>
+                  <td>29.99</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>27.22</td>
+                  <td>0.844</td>
+                  <td>0.280</td>
+                  <td>0.031</td>
+                  <td><span class="best-metric">0.993</span></td>
+                  <td>16.13</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">27.80</span></td>
+                  <td>0.857</td>
+                  <td><span class="best-metric">0.223</span></td>
+                  <td><span class="best-metric">0.029</span></td>
+                  <td>0.989</td>
+                  <td><span class="best-metric">14.19</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <!-- Scene 5a269ba6fe -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene 5a269ba6fe</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td><span class="best-metric">23.95</span></td>
+                  <td>0.826</td>
+                  <td>0.310</td>
+                  <td>0.119</td>
+                  <td>0.823</td>
+                  <td>32.39</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>22.88</td>
+                  <td>0.810</td>
+                  <td>0.343</td>
+                  <td>0.061</td>
+                  <td>0.947</td>
+                  <td>16.41</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td>23.61</td>
+                  <td><span class="best-metric">0.828</span></td>
+                  <td><span class="best-metric">0.306</span></td>
+                  <td><span class="best-metric">0.048</span></td>
+                  <td><span class="best-metric">0.966</span></td>
+                  <td><span class="best-metric">16.20</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene dc263dfbf0 -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene dc263dfbf0</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>22.58</td>
+                  <td>0.870</td>
+                  <td>0.266</td>
+                  <td>0.131</td>
+                  <td>0.798</td>
+                  <td>30.66</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td><span class="best-metric">22.90</span></td>
+                  <td>0.856</td>
+                  <td>0.332</td>
+                  <td>0.084</td>
+                  <td>0.906</td>
+                  <td>17.71</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td>22.86</td>
+                  <td><span class="best-metric">0.875</span></td>
+                  <td><span class="best-metric">0.259</span></td>
+                  <td><span class="best-metric">0.077</span></td>
+                  <td><span class="best-metric">0.940</span></td>
+                  <td><span class="best-metric">16.88</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene 08bbbdcc3d -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene 08bbbdcc3d</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>22.32</td>
+                  <td>0.862</td>
+                  <td>0.281</td>
+                  <td>0.149</td>
+                  <td>0.740</td>
+                  <td>32.29</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>21.98</td>
+                  <td>0.845</td>
+                  <td>0.340</td>
+                  <td>0.102</td>
+                  <td>0.868</td>
+                  <td>18.09</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">23.05</span></td>
+                  <td><span class="best-metric">0.867</span></td>
+                  <td><span class="best-metric">0.273</span></td>
+                  <td><span class="best-metric">0.074</span></td>
+                  <td><span class="best-metric">0.931</span></td>
+                  <td><span class="best-metric">17.24</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene fb564c935d -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene fb564c935d</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>24.05</td>
+                  <td>0.832</td>
+                  <td>0.323</td>
+                  <td>0.122</td>
+                  <td>0.789</td>
+                  <td>30.27</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>22.32</td>
+                  <td>0.816</td>
+                  <td>0.373</td>
+                  <td>0.086</td>
+                  <td>0.883</td>
+                  <td>15.68</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">24.09</span></td>
+                  <td><span class="best-metric">0.837</span></td>
+                  <td><span class="best-metric">0.312</span></td>
+                  <td><span class="best-metric">0.050</span></td>
+                  <td><span class="best-metric">0.970</span></td>
+                  <td><span class="best-metric">14.15</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Average for Full Resolution -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Full Resolution - Average</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>24.09</td>
+                  <td>0.849</td>
+                  <td>0.281</td>
+                  <td>0.121</td>
+                  <td>0.806</td>
+                  <td>31.12</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>23.46</td>
+                  <td>0.834</td>
+                  <td>0.334</td>
+                  <td>0.073</td>
+                  <td>0.919</td>
+                  <td>16.80</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">24.28</span></td>
+                  <td><span class="best-metric">0.853</span></td>
+                  <td><span class="best-metric">0.275</span></td>
+                  <td><span class="best-metric">0.056</span></td>
+                  <td><span class="best-metric">0.959</span></td>
+                  <td><span class="best-metric">15.73</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 10 Views Results -->
+        <h3 class="title is-4" style="margin-top: 2rem;">10 Views Results</h3>
+
+        <!-- Scene 39f36da05b (10 views) -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene 39f36da05b (10 views)</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>17.93</td>
+                  <td>0.711</td>
+                  <td>0.395</td>
+                  <td>0.271</td>
+                  <td>0.477</td>
+                  <td>40.48</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td><span class="best-metric">18.76</span></td>
+                  <td>0.706</td>
+                  <td>0.403</td>
+                  <td>0.123</td>
+                  <td>0.805</td>
+                  <td>21.43</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td>18.23</td>
+                  <td><span class="best-metric">0.707</span></td>
+                  <td><span class="best-metric">0.369</span></td>
+                  <td><span class="best-metric">0.085</span></td>
+                  <td><span class="best-metric">0.924</span></td>
+                  <td><span class="best-metric">20.98</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene 5a269ba6fe (10 views) -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene 5a269ba6fe (10 views)</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>17.89</td>
+                  <td>0.720</td>
+                  <td>0.423</td>
+                  <td>0.239</td>
+                  <td>0.540</td>
+                  <td>40.43</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>15.78</td>
+                  <td>0.715</td>
+                  <td>0.444</td>
+                  <td>0.329</td>
+                  <td>0.417</td>
+                  <td>29.80</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">18.80</span></td>
+                  <td><span class="best-metric">0.734</span></td>
+                  <td><span class="best-metric">0.403</span></td>
+                  <td><span class="best-metric">0.091</span></td>
+                  <td><span class="best-metric">0.901</span></td>
+                  <td><span class="best-metric">21.29</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene dc263dfbf0 (10 views) -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene dc263dfbf0 (10 views)</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>15.55</td>
+                  <td>0.770</td>
+                  <td>0.431</td>
+                  <td>0.354</td>
+                  <td>0.323</td>
+                  <td>41.16</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>16.11</td>
+                  <td>0.775</td>
+                  <td>0.430</td>
+                  <td>0.314</td>
+                  <td>0.402</td>
+                  <td>26.89</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">16.92</span></td>
+                  <td><span class="best-metric">0.803</span></td>
+                  <td><span class="best-metric">0.358</span></td>
+                  <td><span class="best-metric">0.167</span></td>
+                  <td><span class="best-metric">0.766</span></td>
+                  <td><span class="best-metric">23.10</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene 08bbbdcc3d (10 views) -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene 08bbbdcc3d (10 views)</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>15.49</td>
+                  <td>0.762</td>
+                  <td>0.408</td>
+                  <td>0.350</td>
+                  <td>0.296</td>
+                  <td>41.94</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>15.42</td>
+                  <td>0.758</td>
+                  <td>0.446</td>
+                  <td>0.387</td>
+                  <td>0.365</td>
+                  <td>36.60</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">17.66</span></td>
+                  <td><span class="best-metric">0.794</span></td>
+                  <td><span class="best-metric">0.370</span></td>
+                  <td><span class="best-metric">0.134</span></td>
+                  <td><span class="best-metric">0.785</span></td>
+                  <td><span class="best-metric">23.39</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scene fb564c935d (10 views) -->
+        <div class="results-table-section">
+          <h4 class="title is-5">Scene fb564c935d (10 views)</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>17.54</td>
+                  <td>0.746</td>
+                  <td>0.416</td>
+                  <td>0.280</td>
+                  <td>0.421</td>
+                  <td>39.61</td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>16.64</td>
+                  <td>0.741</td>
+                  <td>0.434</td>
+                  <td>0.366</td>
+                  <td>0.365</td>
+                  <td>31.38</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">18.05</span></td>
+                  <td><span class="best-metric">0.755</span></td>
+                  <td><span class="best-metric">0.394</span></td>
+                  <td><span class="best-metric">0.112</span></td>
+                  <td><span class="best-metric">0.875</span></td>
+                  <td><span class="best-metric">22.51</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Average for 10 Views -->
+        <div class="results-table-section">
+          <h4 class="title is-5">10 Views - Average</h4>
+          <div class="table-container">
+            <table class="table is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>PSNR (↑)</th>
+                  <th>SSIM (↑)</th>
+                  <th>LPIPS (↓)</th>
+                  <th>Abs Rel (↓)</th>
+                  <th>δ₁ (↑)</th>
+                  <th>MAE (↓)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LinPrim</td>
+                  <td>16.88</td>
+                  <td>0.742</td>
+                  <td>0.414</td>
+                  <td>0.299</td>
+                  <td>0.412</td>
+                  <td>40.72</td>
+                </tr>
+                <tr class="is-selected-row">
+                  <td>DN-LinPrim (Ours)</td>
+                  <td><span class="best-metric">17.94</span></td>
+                  <td><span class="best-metric">0.759</span></td>
+                  <td><span class="best-metric">0.379</span></td>
+                  <td><span class="best-metric">0.118</span></td>
+                  <td><span class="best-metric">0.850</span></td>
+                  <td><span class="best-metric">22.26</span></td>
+                </tr>
+                <tr>
+                  <td>DN-Splatter</td>
+                  <td>16.54</td>
+                  <td>0.739</td>
+                  <td>0.431</td>
+                  <td>0.304</td>
+                  <td>0.471</td>
+                  <td>29.22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 </section>
 
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@article{placeholder2024,
-  title={Lorem Ipsum Dolor Sit Amet},
-  author={Name, Author},
-  journal={Conference Name},
-  year={2024}
-}</code></pre>
-  </div>
-</section>
+<!--<section class="section" id="BibTeX">-->
+<!--  <div class="container is-max-desktop content">-->
+<!--    <h2 class="title">BibTeX</h2>-->
+<!--    <pre><code>@article{placeholder2024,-->
+<!--  title={Lorem Ipsum Dolor Sit Amet},-->
+<!--  author={Name, Author},-->
+<!--  journal={Conference Name},-->
+<!--  year={2024}-->
+<!--}</code></pre>-->
+<!--  </div>-->
+<!--</section>-->
 
 <footer class="footer">
   <div class="container">
