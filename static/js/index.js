@@ -510,6 +510,48 @@ class ImageComparisonSlider {
         // Get placeholder and help text elements
         const placeholder = document.getElementById('comparison-placeholder');
         const helpText = document.getElementById('comparison-help-text');
+        const clickWarning = document.getElementById('comparison-click-warning');
+
+        // Track blocked click attempts to detect confused users
+        let blockedClickCount = 0;
+        let blockedClickTimer = null;
+        let warningOnCooldown = false;
+        const BLOCKED_CLICK_THRESHOLD = 3; // Show warning after 3 blocked attempts
+        const BLOCKED_CLICK_RESET_TIME = 4000; // Reset counter after 4 seconds of no blocked clicks
+        const WARNING_COOLDOWN_TIME = 30000; // 30 seconds before warning can appear again
+
+        const showSelectionWarning = () => {
+            if (clickWarning && !warningOnCooldown) {
+                clickWarning.style.display = 'block';
+                warningOnCooldown = true;
+
+                // Auto-hide after 6 seconds
+                setTimeout(() => {
+                    clickWarning.style.display = 'none';
+                }, 6000);
+
+                // Cooldown period before warning can show again
+                setTimeout(() => {
+                    warningOnCooldown = false;
+                }, WARNING_COOLDOWN_TIME);
+            }
+        };
+
+        const trackBlockedClick = () => {
+            blockedClickCount++;
+
+            // Reset timer
+            if (blockedClickTimer) clearTimeout(blockedClickTimer);
+            blockedClickTimer = setTimeout(() => {
+                blockedClickCount = 0;
+            }, BLOCKED_CLICK_RESET_TIME);
+
+            // Show warning if threshold reached
+            if (blockedClickCount >= BLOCKED_CLICK_THRESHOLD) {
+                showSelectionWarning();
+                blockedClickCount = 0;
+            }
+        };
 
         const updateComparisonView = () => {
             const allButtons = Array.from(document.querySelectorAll('.comparison-methods .button'));
@@ -562,6 +604,7 @@ class ImageComparisonSlider {
                     // Only allow if more than 1 button is selected (minimum 1 must stay)
                     if (selectedButtons.length > 1) {
                         button.classList.remove('is-selected');
+                        updateComparisonView();
                     }
                     // If only 1 selected, do nothing (can't deselect the last one)
                 } else {
@@ -569,32 +612,13 @@ class ImageComparisonSlider {
                     if (selectedButtons.length < 2) {
                         // Less than 2 selected - just add this one
                         button.classList.add('is-selected');
+                        updateComparisonView();
                     } else {
-                        // Already 2 selected - need to deselect one first
-                        // Strategy: Deselect the button that is FURTHEST from the clicked button
-                        // This creates intuitive "sliding window" behavior
-                        const clickedIndex = METHOD_ORDER.indexOf(clickedMethod);
-
-                        let maxDistance = -1;
-                        let buttonToRemove = null;
-
-                        selectedButtons.forEach(b => {
-                            const idx = METHOD_ORDER.indexOf(b.dataset.method);
-                            const distance = Math.abs(idx - clickedIndex);
-                            if (distance > maxDistance) {
-                                maxDistance = distance;
-                                buttonToRemove = b;
-                            }
-                        });
-
-                        if (buttonToRemove) {
-                            buttonToRemove.classList.remove('is-selected');
-                        }
-                        button.classList.add('is-selected');
+                        // Already 2 selected - BLOCK selection and track attempt
+                        trackBlockedClick();
+                        // Don't change anything - user needs to deselect first
                     }
                 }
-
-                updateComparisonView();
             });
         });
 
