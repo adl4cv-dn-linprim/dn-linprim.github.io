@@ -201,6 +201,7 @@ class ImageComparisonSlider {
         });
 
         // Method buttons - Smart selection with "Ours" preference
+        // Only attach event listeners to enabled buttons
         // Rules:
         // 1. Always keep 2 buttons selected
         // 2. "Ours" should stay selected unless explicitly deselected
@@ -209,7 +210,7 @@ class ImageComparisonSlider {
 
         const DEFAULT_METHOD = 'ours'; // Easy to change default here
 
-        document.querySelectorAll('.comparison-methods .button').forEach(button => {
+        document.querySelectorAll('.comparison-methods .button:not(:disabled)').forEach(button => {
             button.addEventListener('click', () => {
                 const clickedMethod = button.dataset.method;
                 const isSelected = button.classList.contains('is-selected');
