@@ -327,8 +327,86 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Average Results Prominent Display */
+.results-table-section h3.title.is-4 {
+    color: #363636;
+    font-weight: 700;
+}
+
+.results-table-section h4.title.is-5 {
+    font-weight: 600;
+}
+
+/* Make average results tables stand out */
+.results-table-section > div > .table-container .table {
+    background-color: white;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.results-table-section > div > .table-container .table thead {
+    background-color: #3273dc;
+}
+
+.results-table-section > div > .table-container .table thead th {
+    color: white;
+    font-weight: 600;
+}
+
 .table-container {
     overflow-x: auto;
+}
+
+.results-section-dropdown {
+    margin-bottom: 2rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.results-section-toggle {
+    width: 100%;
+    padding: 1rem;
+    background-color: #8e8e8e;
+    color: white;
+    border: none;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.results-section-toggle:hover {
+    background-color: #575757;
+}
+
+.results-section-toggle::after {
+    content: '▼';
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.results-section-toggle.collapsed::after {
+    transform: rotate(-90deg);
+}
+
+.results-section-content {
+    padding: 1.5rem;
+    background-color: #fafafa;
+    max-height: 10000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.results-section-content.collapsed {
+    max-height: 0;
+    padding: 0;
+    opacity: 0;
 }
 
 .table {
@@ -381,6 +459,179 @@ body {
     pointer-events: none;
 }
 
+/* ============================================
+   4-Way Quad Image Comparison Styles
+   ============================================ */
+
+.quad-comparison-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.quad-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  background: #1a1a1a;
+  cursor: move;
+}
+
+/* Base styling for all quadrant images */
+.quad-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.quad-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* Quadrant labels */
+.quad-label {
+  position: absolute;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: opacity 0.15s ease;
+}
+
+/* Label positions for each quadrant */
+.quad-top-left .quad-label {
+  top: 12px;
+  left: 12px;
+}
+
+.quad-top-right .quad-label {
+  top: 12px;
+  right: 12px;
+}
+
+.quad-bottom-left .quad-label {
+  bottom: 12px;
+  left: 12px;
+}
+
+.quad-bottom-right .quad-label {
+  bottom: 12px;
+  right: 12px;
+}
+
+/* Highlight "Ours" label with green */
+.quad-bottom-right .quad-label {
+  background: rgba(34, 197, 94, 0.9);
+  color: white;
+}
+
+/* Slider lines */
+.quad-slider-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 15;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.quad-slider-horizontal {
+  width: 100%;
+  height: 3px;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.quad-slider-vertical {
+  width: 3px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Central slider handle */
+.quad-slider-handle {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  cursor: move;
+  cursor: grab;
+}
+
+.quad-slider-handle:active {
+  cursor: grabbing;
+}
+
+.quad-handle-center {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.quad-handle-center i {
+  color: #555;
+  font-size: 0.7rem;
+}
+
+.quad-slider-handle:hover .quad-handle-center {
+  transform: scale(1.15);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+}
+
+.quad-slider-handle:active .quad-handle-center {
+  transform: scale(0.95);
+}
+
+/* Animation for initial load */
+@keyframes quad-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.quad-comparison-container {
+  animation: quad-fade-in 0.5s ease-out;
+}
+
 /* Responsive */
 @media screen and (max-width: 768px) {
     .comparison-container {
@@ -413,6 +664,37 @@ body {
     #modality-tabs .icon {
         margin-right: 0.25rem;
     }
+
+    /* Quad comparison responsive */
+    .quad-comparison-container {
+        max-width: 100%;
+    }
+
+    .quad-image-wrapper {
+        aspect-ratio: 1 / 1;
+    }
+
+    .quad-slider-handle {
+        width: 24px;
+        height: 24px;
+    }
+
+    .quad-handle-center i {
+        font-size: 0.6rem;
+    }
+
+    .quad-label {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+    }
+
+    .quad-slider-horizontal {
+        height: 2px;
+    }
+
+    .quad-slider-vertical {
+        width: 2px;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -431,5 +713,47 @@ body {
 
     #modality-tabs span:not(.icon) {
         display: none;
+    }
+
+    /* Quad comparison small screens */
+    .quad-slider-handle {
+        width: 22px;
+        height: 22px;
+    }
+
+    .quad-handle-center i {
+        font-size: 0.55rem;
+    }
+
+    .quad-label {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+    }
+
+    .quad-top-left .quad-label,
+    .quad-top-right .quad-label,
+    .quad-bottom-left .quad-label,
+    .quad-bottom-right .quad-label {
+        top: 8px;
+        left: 8px;
+        right: auto;
+        bottom: auto;
+    }
+
+    .quad-top-right .quad-label {
+        left: auto;
+        right: 8px;
+    }
+
+    .quad-bottom-left .quad-label {
+        top: auto;
+        bottom: 8px;
+    }
+
+    .quad-bottom-right .quad-label {
+        top: auto;
+        left: auto;
+        right: 8px;
+        bottom: 8px;
     }
 }

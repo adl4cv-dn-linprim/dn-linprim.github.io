@@ -64,12 +64,51 @@
 </section>
 
 <section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <img src="./static/images/placeholder.png" alt="Teaser Image"/>
-      <h2 class="subtitle has-text-centered">
-        DN-LinPrim: Depth- and Normals-regularized LinPrim.
-      </h2>
+  <div class="container is-fluid" style="padding: 0 2rem;">
+    <div class="hero-body" style="padding-top: 1rem;">
+      <!-- 4-Way Quad Image Comparison -->
+      <div class="quad-comparison-container" id="quad-comparison">
+        <div class="quad-image-wrapper">
+          <!-- Top-Left: Ground Truth -->
+          <div class="quad-image quad-top-left" data-position="top-left">
+            <img src="./static/images/ground-truth/gt_normals_DSC00767.png" alt="Ground Truth">
+            <span class="quad-label">Ground Truth</span>
+          </div>
+
+          <!-- Top-Right: LinPrim -->
+          <div class="quad-image quad-top-right" data-position="top-right">
+            <img src="./static/images/linprim/linprim_normals_DSC00767.png" alt="LinPrim">
+            <span class="quad-label">LinPrim</span>
+          </div>
+
+          <!-- Bottom-Left: DN-Splatter -->
+          <div class="quad-image quad-bottom-left" data-position="bottom-left">
+            <img src="./static/images/dn-splatter/dn_splatter_nromals_DSC00767.jpg" alt="DN-Splatter">
+            <span class="quad-label">DN-Splatter</span>
+          </div>
+
+          <!-- Bottom-Right: Ours -->
+          <div class="quad-image quad-bottom-right" data-position="bottom-right">
+            <img src="./static/images/ours/ours_normals_DSC00767.png" alt="Ours">
+            <span class="quad-label">Ours</span>
+          </div>
+
+          <!-- Slider Lines -->
+          <div class="quad-slider-line quad-slider-horizontal" id="quad-line-h"></div>
+          <div class="quad-slider-line quad-slider-vertical" id="quad-line-v"></div>
+
+          <!-- Central Slider Handle -->
+          <div class="quad-slider-handle" id="quad-slider-handle">
+            <div class="quad-handle-center">
+              <i class="fas fa-arrows-alt"></i>
+            </div>
+          </div>
+        </div>
+
+        <p class="has-text-centered is-size-7 mt-2" style="color: #888;">
+          <i class="fas fa-hand-pointer"></i> Drag the slider to compare methods
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -182,13 +221,123 @@
         <h2 class="title is-3">Results</h2>
         <div class="content has-text-justified">
           <p>
-            All experiments are run on full resolution (<code>r = 1</code>) and on the 30k iterations for all pipelines.
-            For the LinPrim and Our pipeline we use the found lambda values. Our pipeline runs the intersection depth rendering at the entry point.
+            All experiments are run on full resolution and on the 30k iterations for all pipelines.
+            For Our pipeline we use the lambda values <code>λ<sub>depth</sub>=0.1</code>, <code>λ<sub>normals</sub>=0.05</code> for depth and normal loss regularization. Our pipeline runs the intersection depth rendering at the entry point.
+            For the 10 views results we selected 10 views based on maximizing the visible COLMAP points.
           </p>
         </div>
 
-        <!-- Full Resolution Results -->
-        <h3 class="title is-4">Full Resolution Results</h3>
+        <div class="results-table-section" style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <h3 class="title is-4" style="margin-bottom: 1.5rem;">Average Results</h3>
+
+          <!-- Full Resolution Average -->
+          <div style="margin-bottom: 2rem;">
+            <h4 class="title is-5" style="color: #363636; border-bottom: 2px solid #3273dc; padding-bottom: 0.5rem; margin-bottom: 1rem;">Full Resolution</h4>
+            <div class="table-container">
+              <table class="table is-striped is-hoverable">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>PSNR (↑)</th>
+                    <th>SSIM (↑)</th>
+                    <th>LPIPS (↓)</th>
+                    <th>Abs Rel (↓)</th>
+                    <th>δ₁ (↑)</th>
+                    <th>MAE (↓)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>LinPrim</td>
+                    <td>24.09</td>
+                    <td>0.849</td>
+                    <td>0.281</td>
+                    <td>0.121</td>
+                    <td>0.806</td>
+                    <td>31.12</td>
+                  </tr>
+                  <tr>
+                    <td>DN-Splatter</td>
+                    <td>23.46</td>
+                    <td>0.834</td>
+                    <td>0.334</td>
+                    <td>0.073</td>
+                    <td>0.919</td>
+                    <td>16.80</td>
+                  </tr>
+                  <tr class="is-selected-row">
+                    <td>Ours</td>
+                    <td><span class="best-metric">24.28</span></td>
+                    <td><span class="best-metric">0.853</span></td>
+                    <td><span class="best-metric">0.275</span></td>
+                    <td><span class="best-metric">0.056</span></td>
+                    <td><span class="best-metric">0.959</span></td>
+                    <td><span class="best-metric">15.73</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 10 Views Average -->
+          <div>
+            <h4 class="title is-5" style="color: #363636; border-bottom: 2px solid #3273dc; padding-bottom: 0.5rem; margin-bottom: 1rem;">10 Views</h4>
+            <div class="table-container">
+              <table class="table is-striped is-hoverable">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>PSNR (↑)</th>
+                    <th>SSIM (↑)</th>
+                    <th>LPIPS (↓)</th>
+                    <th>Abs Rel (↓)</th>
+                    <th>δ₁ (↑)</th>
+                    <th>MAE (↓)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>LinPrim</td>
+                    <td>16.88</td>
+                    <td>0.742</td>
+                    <td>0.414</td>
+                    <td>0.299</td>
+                    <td>0.412</td>
+                    <td>40.72</td>
+                  </tr>
+                  <tr>
+                    <td>DN-Splatter</td>
+                    <td>16.54</td>
+                    <td>0.739</td>
+                    <td>0.431</td>
+                    <td>0.304</td>
+                    <td>0.471</td>
+                    <td>29.22</td>
+                  </tr>
+                  <tr class="is-selected-row">
+                    <td>Ours</td>
+                    <td><span class="best-metric">17.94</span></td>
+                    <td><span class="best-metric">0.759</span></td>
+                    <td><span class="best-metric">0.379</span></td>
+                    <td><span class="best-metric">0.118</span></td>
+                    <td><span class="best-metric">0.850</span></td>
+                    <td><span class="best-metric">22.26</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Scene Results in Dropdowns -->
+        <h3 class="title is-5" style="margin-bottom: 1rem; color: #7a7a7a;">Detailed Results by Scene</h3>
+
+        <!-- Full Resolution Results Dropdown -->
+        <div class="results-section-dropdown">
+          <button class="results-section-toggle" onclick="toggleResultsSection(this)">
+            <span>Full Resolution Results</span>
+          </button>
+          <div class="results-section-content">
 
         <!-- Scene 39f36da05b -->
         <div class="results-table-section">
@@ -226,7 +375,7 @@
                   <td>16.13</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">27.80</span></td>
                   <td>0.857</td>
                   <td><span class="best-metric">0.223</span></td>
@@ -275,7 +424,7 @@
                   <td>16.41</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td>23.61</td>
                   <td><span class="best-metric">0.828</span></td>
                   <td><span class="best-metric">0.306</span></td>
@@ -324,7 +473,7 @@
                   <td>17.71</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td>22.86</td>
                   <td><span class="best-metric">0.875</span></td>
                   <td><span class="best-metric">0.259</span></td>
@@ -373,7 +522,7 @@
                   <td>18.09</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">23.05</span></td>
                   <td><span class="best-metric">0.867</span></td>
                   <td><span class="best-metric">0.273</span></td>
@@ -422,7 +571,7 @@
                   <td>15.68</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">24.09</span></td>
                   <td><span class="best-metric">0.837</span></td>
                   <td><span class="best-metric">0.312</span></td>
@@ -471,7 +620,7 @@
                   <td>16.80</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">24.28</span></td>
                   <td><span class="best-metric">0.853</span></td>
                   <td><span class="best-metric">0.275</span></td>
@@ -482,10 +631,16 @@
               </tbody>
             </table>
           </div>
+          </div>
+          </div>
         </div>
 
-        <!-- 10 Views Results -->
-        <h3 class="title is-4" style="margin-top: 2rem;">10 Views Results</h3>
+        <!-- 10 Views Results Dropdown -->
+        <div class="results-section-dropdown">
+          <button class="results-section-toggle collapsed" onclick="toggleResultsSection(this)">
+            <span>10 Views Results</span>
+          </button>
+          <div class="results-section-content collapsed">
 
         <!-- Scene 39f36da05b (10 views) -->
         <div class="results-table-section">
@@ -523,7 +678,7 @@
                   <td>21.43</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td>18.23</td>
                   <td><span class="best-metric">0.707</span></td>
                   <td><span class="best-metric">0.369</span></td>
@@ -572,7 +727,7 @@
                   <td>29.80</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">18.80</span></td>
                   <td><span class="best-metric">0.734</span></td>
                   <td><span class="best-metric">0.403</span></td>
@@ -621,7 +776,7 @@
                   <td>26.89</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">16.92</span></td>
                   <td><span class="best-metric">0.803</span></td>
                   <td><span class="best-metric">0.358</span></td>
@@ -670,7 +825,7 @@
                   <td>36.60</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">17.66</span></td>
                   <td><span class="best-metric">0.794</span></td>
                   <td><span class="best-metric">0.370</span></td>
@@ -719,7 +874,7 @@
                   <td>31.38</td>
                 </tr>
                 <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
+                  <td>Ours</td>
                   <td><span class="best-metric">18.05</span></td>
                   <td><span class="best-metric">0.755</span></td>
                   <td><span class="best-metric">0.394</span></td>
@@ -758,15 +913,6 @@
                   <td>0.412</td>
                   <td>40.72</td>
                 </tr>
-                <tr class="is-selected-row">
-                  <td>DN-LinPrim (Ours)</td>
-                  <td><span class="best-metric">17.94</span></td>
-                  <td><span class="best-metric">0.759</span></td>
-                  <td><span class="best-metric">0.379</span></td>
-                  <td><span class="best-metric">0.118</span></td>
-                  <td><span class="best-metric">0.850</span></td>
-                  <td><span class="best-metric">22.26</span></td>
-                </tr>
                 <tr>
                   <td>DN-Splatter</td>
                   <td>16.54</td>
@@ -776,8 +922,21 @@
                   <td>0.471</td>
                   <td>29.22</td>
                 </tr>
+                <tr class="is-selected-row">
+                  <td>Ours</td>
+                  <td><span class="best-metric">17.94</span></td>
+                  <td><span class="best-metric">0.759</span></td>
+                  <td><span class="best-metric">0.379</span></td>
+                  <td><span class="best-metric">0.118</span></td>
+                  <td><span class="best-metric">0.850</span></td>
+                  <td><span class="best-metric">22.26</span></td>
+                </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+
           </div>
         </div>
 

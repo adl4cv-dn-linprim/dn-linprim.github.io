@@ -1,3 +1,14 @@
+// ============================================
+// Results Section Dropdown Toggle
+// ============================================
+function toggleResultsSection(button) {
+    const dropdown = button.closest('.results-section-dropdown');
+    const content = dropdown.querySelector('.results-section-content');
+
+    button.classList.toggle('collapsed');
+    content.classList.toggle('collapsed');
+}
+
 window.HELP_IMPROVE_VIDEOJS = false;
 
 var INTERP_BASE = "./static/interpolation/stacked";
@@ -76,6 +87,227 @@ $(document).ready(function() {
     bulmaSlider.attach();
 
 })
+
+// ============================================
+// 4-Way Quad Image Comparison Slider
+// ============================================
+class QuadImageComparison {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) return;
+
+        this.wrapper = this.container.querySelector('.quad-image-wrapper');
+        this.handle = document.getElementById('quad-slider-handle');
+        this.lineH = document.getElementById('quad-line-h');
+        this.lineV = document.getElementById('quad-line-v');
+
+        this.quadrants = {
+            topLeft: this.container.querySelector('.quad-top-left'),
+            topRight: this.container.querySelector('.quad-top-right'),
+            bottomLeft: this.container.querySelector('.quad-bottom-left'),
+            bottomRight: this.container.querySelector('.quad-bottom-right')
+        };
+
+        // Position as percentage (0-100)
+        this.posX = 50;
+        this.posY = 50;
+
+        this.isDragging = false;
+        this.bounds = null;
+
+        this.init();
+    }
+
+    init() {
+        this.updateClipping();
+        this.bindEvents();
+
+        // Update bounds on resize
+        window.addEventListener('resize', () => {
+            this.bounds = null;
+        });
+    }
+
+    getBounds() {
+        if (!this.bounds) {
+            this.bounds = this.wrapper.getBoundingClientRect();
+        }
+        return this.bounds;
+    }
+
+    bindEvents() {
+        // Mouse events
+        this.handle.addEventListener('mousedown', (e) => this.startDrag(e));
+        document.addEventListener('mousemove', (e) => this.drag(e));
+        document.addEventListener('mouseup', () => this.endDrag());
+
+        // Touch events
+        this.handle.addEventListener('touchstart', (e) => this.startDrag(e), { passive: false });
+        document.addEventListener('touchmove', (e) => this.drag(e), { passive: false });
+        document.addEventListener('touchend', () => this.endDrag());
+
+        // Click anywhere in wrapper to move slider
+        this.wrapper.addEventListener('click', (e) => {
+            if (e.target === this.handle || this.handle.contains(e.target)) return;
+            this.moveToPosition(e);
+        });
+
+        // Prevent image dragging
+        this.wrapper.querySelectorAll('img').forEach(img => {
+            img.addEventListener('dragstart', (e) => e.preventDefault());
+        });
+    }
+
+    startDrag(e) {
+        e.preventDefault();
+        this.isDragging = true;
+        this.bounds = null; // Reset bounds
+        this.handle.style.transition = 'none';
+        this.lineH.style.transition = 'none';
+        this.lineV.style.transition = 'none';
+        document.body.style.cursor = 'grabbing';
+    }
+
+    drag(e) {
+        if (!this.isDragging) return;
+        e.preventDefault();
+
+        const bounds = this.getBounds();
+        let clientX, clientY;
+
+        if (e.touches) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
+        // Calculate position as percentage
+        let x = ((clientX - bounds.left) / bounds.width) * 100;
+        let y = ((clientY - bounds.top) / bounds.height) * 100;
+
+        // Clamp values between 2% and 98% for better UX
+        this.posX = Math.max(2, Math.min(98, x));
+        this.posY = Math.max(2, Math.min(98, y));
+
+        this.updateClipping();
+    }
+
+    endDrag() {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        document.body.style.cursor = '';
+
+        // Re-enable transitions
+        this.handle.style.transition = '';
+        this.lineH.style.transition = '';
+        this.lineV.style.transition = '';
+    }
+
+    moveToPosition(e) {
+        const bounds = this.getBounds();
+        let x = ((e.clientX - bounds.left) / bounds.width) * 100;
+        let y = ((e.clientY - bounds.top) / bounds.height) * 100;
+
+        this.posX = Math.max(2, Math.min(98, x));
+        this.posY = Math.max(2, Math.min(98, y));
+
+        // Add smooth transition for click
+        this.handle.style.transition = 'left 0.3s ease, top 0.3s ease';
+        this.lineH.style.transition = 'top 0.3s ease';
+        this.lineV.style.transition = 'left 0.3s ease';
+
+        this.updateClipping();
+
+        // Remove transition after animation
+        setTimeout(() => {
+            this.handle.style.transition = '';
+            this.lineH.style.transition = '';
+            this.lineV.style.transition = '';
+        }, 300);
+    }
+
+    updateClipping() {
+        const x = this.posX;
+        const y = this.posY;
+
+        // Update handle position
+        this.handle.style.left = `${x}%`;
+        this.handle.style.top = `${y}%`;
+
+        // Update slider lines
+        this.lineH.style.top = `${y}%`;
+        this.lineV.style.left = `${x}%`;
+
+        // Apply clip-path to each quadrant
+        // Top-Left: visible from (0,0) to (x,y)
+        this.quadrants.topLeft.style.clipPath = `polygon(0 0, ${x}% 0, ${x}% ${y}%, 0 ${y}%)`;
+
+        // Top-Right: visible from (x,0) to (100,y)
+        this.quadrants.topRight.style.clipPath = `polygon(${x}% 0, 100% 0, 100% ${y}%, ${x}% ${y}%)`;
+
+        // Bottom-Left: visible from (0,y) to (x,100)
+        this.quadrants.bottomLeft.style.clipPath = `polygon(0 ${y}%, ${x}% ${y}%, ${x}% 100%, 0 100%)`;
+
+        // Bottom-Right: visible from (x,y) to (100,100)
+        this.quadrants.bottomRight.style.clipPath = `polygon(${x}% ${y}%, 100% ${y}%, 100% 100%, ${x}% 100%)`;
+
+        // Update label visibility based on quadrant size
+        this.updateLabelVisibility(x, y);
+    }
+
+    updateLabelVisibility(x, y) {
+        const threshold = 10; // Minimum percentage for label visibility
+
+        const labels = {
+            topLeft: this.quadrants.topLeft.querySelector('.quad-label'),
+            topRight: this.quadrants.topRight.querySelector('.quad-label'),
+            bottomLeft: this.quadrants.bottomLeft.querySelector('.quad-label'),
+            bottomRight: this.quadrants.bottomRight.querySelector('.quad-label')
+        };
+
+        // Show/hide labels based on quadrant size
+        labels.topLeft.style.opacity = (x > threshold && y > threshold) ? '1' : '0';
+        labels.topRight.style.opacity = ((100 - x) > threshold && y > threshold) ? '1' : '0';
+        labels.bottomLeft.style.opacity = (x > threshold && (100 - y) > threshold) ? '1' : '0';
+        labels.bottomRight.style.opacity = ((100 - x) > threshold && (100 - y) > threshold) ? '1' : '0';
+    }
+
+    // Public method to update images
+    setImages(images) {
+        if (images.topLeft) {
+            this.quadrants.topLeft.querySelector('img').src = images.topLeft;
+        }
+        if (images.topRight) {
+            this.quadrants.topRight.querySelector('img').src = images.topRight;
+        }
+        if (images.bottomLeft) {
+            this.quadrants.bottomLeft.querySelector('img').src = images.bottomLeft;
+        }
+        if (images.bottomRight) {
+            this.quadrants.bottomRight.querySelector('img').src = images.bottomRight;
+        }
+    }
+
+    // Reset to center position
+    reset() {
+        this.posX = 50;
+        this.posY = 50;
+
+        this.handle.style.transition = 'left 0.3s ease, top 0.3s ease';
+        this.lineH.style.transition = 'top 0.3s ease';
+        this.lineV.style.transition = 'left 0.3s ease';
+
+        this.updateClipping();
+
+        setTimeout(() => {
+            this.handle.style.transition = '';
+            this.lineH.style.transition = '';
+            this.lineV.style.transition = '';
+        }, 300);
+    }
+}
 
 // ============================================
 // Image Data Configuration
@@ -451,5 +683,9 @@ class ImageComparisonSlider {
 // Initialize on DOM Ready
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the 4-way quad comparison slider for teaser
+    window.quadComparison = new QuadImageComparison('quad-comparison');
+
+    // Initialize the 2-way image comparison slider
     new ImageComparisonSlider();
 });
