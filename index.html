@@ -70,7 +70,7 @@
     <div class="hero-body">
       <img src="./static/images/placeholder.png" alt="Teaser Image"/>
       <h2 class="subtitle has-text-centered">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        DN-LinPrim: Depth- and Normals-regularized LinPrim.
       </h2>
     </div>
   </div>
@@ -91,6 +91,83 @@
             Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Method Comparison</h2>
+
+    <!-- Scene Selector -->
+    <div class="field is-horizontal" style="justify-content: center; margin-bottom: 1.5rem;">
+      <div class="field-label is-normal">
+        <label class="label">Scene:</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <div class="control">
+            <div class="select">
+              <select id="scene-selector">
+                <option value="DSC00767">Scene 1 (DSC00767)</option>
+                <option value="DSC00784">Scene 2 (DSC00784)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modality Toggle Buttons -->
+    <div class="tabs is-centered is-boxed">
+      <ul id="modality-tabs">
+        <li class="is-active" data-modality="rgb">
+          <a>
+            <span class="icon is-small"><i class="fas fa-image"></i></span>
+            <span>RGB</span>
+          </a>
+        </li>
+        <li data-modality="depth">
+          <a>
+            <span class="icon is-small"><i class="fas fa-layer-group"></i></span>
+            <span>Depth</span>
+          </a>
+        </li>
+        <li data-modality="normals">
+          <a>
+            <span class="icon is-small"><i class="fas fa-vector-square"></i></span>
+            <span>Normals</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Method Selection Buttons -->
+    <div class="buttons is-centered has-addons comparison-methods">
+      <button class="button is-selected" data-method="ours">Ours</button>
+      <button class="button is-selected" data-method="linprim">LinPrim</button>
+      <button class="button" data-method="dn-splatter">DN-Splatter</button>
+      <button class="button" data-method="ground-truth">Ground Truth</button>
+    </div>
+
+    <!-- Image Comparison Container -->
+    <div class="comparison-container">
+      <div class="comparison-wrapper">
+        <img id="base-image" src="" alt="Base comparison image" class="comparison-image base-image">
+        <div class="comparison-overlay" id="overlay-container">
+          <img id="overlay-image" src="" alt="Overlay comparison image" class="comparison-image overlay-image">
+        </div>
+        <div class="comparison-slider" id="slider-handle">
+          <div class="slider-button">
+            <i class="fas fa-chevron-left"></i>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+      <div class="comparison-labels">
+        <span class="label-left" id="label-left">Ours</span>
+        <span class="label-right" id="label-right">LinPrim</span>
       </div>
     </div>
   </div>
