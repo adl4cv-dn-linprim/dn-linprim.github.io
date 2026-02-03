@@ -354,6 +354,46 @@ const comparisonData = {
                 'dn-splatter': 'static/images/dn-splatter/dn_splatter_normals_DSC00784.jpg',
                 'ground-truth': 'static/images/ground-truth/gt_normals_DSC00784.png'
             }
+        },
+        'DSC00862': {
+            rgb: {
+                ours: 'static/images/ours/ours_rgb_DSC00862.png',
+                linprim: 'static/images/linprim/linprim_rgb_DSC00862.png',
+                'dn-splatter': 'static/images/dn-splatter/dn_splatter_rgb_DSC00862.jpg',
+                'ground-truth': 'static/images/ground-truth/gt_rgb_DSC00862.png'
+            },
+            depth: {
+                ours: 'static/images/ours/ours_depth_DSC00862.png',
+                linprim: 'static/images/linprim/linprim_depth_DSC00862.png',
+                'dn-splatter': 'static/images/dn-splatter/dn_splatter_depth_DSC00862.png',
+                'ground-truth': 'static/images/ground-truth/gt_depth_DSC00862.png'
+            },
+            normals: {
+                ours: 'static/images/ours/ours_normals_DSC00862.png',
+                linprim: 'static/images/linprim/linprim_normals_DSC00862.png',
+                'dn-splatter': 'static/images/dn-splatter/dn_splatter_normals_DSC00862.jpg',
+                'ground-truth': 'static/images/ground-truth/gt_normals_DSC00862.png'
+            }
+        },
+        'DSC00865': {
+            rgb: {
+                ours: 'static/images/ours/ours_rgb_DSC00865.png',
+                linprim: 'static/images/linprim/linprim_rgb_DSC00865.png',
+                'dn-splatter': 'static/images/dn-splatter/dn_splatter_rgb_DSC00865.jpg',
+                'ground-truth': 'static/images/ground-truth/gt_rgb_DSC00865.png'
+            },
+            depth: {
+                ours: 'static/images/ours/ours_depth_DSC00865.png',
+                linprim: 'static/images/linprim/linprim_depth_DSC00865.png',
+                'dn-splatter': 'static/images/dn-splatter/dn_splatter_depth_DSC00865.png',
+                'ground-truth': 'static/images/ground-truth/gt_depth_DSC00865.png'
+            },
+            normals: {
+                ours: 'static/images/ours/ours_normals_DSC00865.png',
+                linprim: 'static/images/linprim/linprim_normals_DSC00865.png',
+                'dn-splatter': 'static/images/dn-splatter/dn_splatter_normals_DSC00865.jpg',
+                'ground-truth': 'static/images/ground-truth/gt_normals_DSC00865.png'
+            }
         }
     }
 };
@@ -366,7 +406,7 @@ class ImageComparisonSlider {
         this.currentScene = 'DSC00767'; // Default scene
         this.currentModality = 'rgb';
         this.leftMethod = 'ours';
-        this.rightMethod = 'linprim';
+        this.rightMethod = null; // Default: only "Ours" selected
         this.isDragging = false;
         this.sliderPosition = 50;
         this.imageCache = {};
@@ -374,7 +414,31 @@ class ImageComparisonSlider {
         this.initElements();
         this.preloadImages();
         this.bindEvents();
-        this.updateImages();
+        this.initializeView(); // Initialize based on default selection
+    }
+
+    /**
+     * Initialize the view based on current button selection state
+     */
+    initializeView() {
+        const selectedButtons = document.querySelectorAll('.comparison-methods .button.is-selected');
+        const placeholder = document.getElementById('comparison-placeholder');
+        const helpText = document.getElementById('comparison-help-text');
+
+        if (selectedButtons.length === 1) {
+            // Only one method selected - show placeholder
+            if (placeholder) placeholder.style.display = 'flex';
+            if (helpText) helpText.style.display = 'block';
+            if (this.slider) this.slider.style.display = 'none';
+            if (this.overlay) this.overlay.style.display = 'none';
+            this.updateLabels();
+            this.updateSingleImage();
+        } else {
+            // Two methods selected - show comparison
+            if (placeholder) placeholder.style.display = 'none';
+            if (helpText) helpText.style.display = 'none';
+            this.updateImages();
+        }
     }
 
     initElements() {
@@ -385,6 +449,7 @@ class ImageComparisonSlider {
         this.overlayImage = document.getElementById('overlay-image');
         this.labelLeft = document.getElementById('label-left');
         this.labelRight = document.getElementById('label-right');
+        this.placeholder = document.getElementById('comparison-placeholder');
 
         // Check if all elements exist
         if (!this.wrapper || !this.overlay || !this.slider || !this.baseImage || !this.overlayImage) {
@@ -432,137 +497,104 @@ class ImageComparisonSlider {
             });
         });
 
-        // Method buttons - Smart selection with "Ours" preference
-        // Only attach event listeners to enabled buttons
+        // Method buttons - Smart selection with good UX
         // Rules:
-        // 1. Always keep 2 buttons selected
-        // 2. "Ours" should stay selected unless explicitly deselected
-        // 3. When selecting a non-ours button, ensure "Ours" is also selected
-        // 4. Default fallback: "Ours" is the preferred method
+        // 1. Minimum 1, maximum 2 buttons selected at a time
+        // 2. When only 1 selected: show placeholder text instead of comparison
+        // 3. When selecting a 3rd button: deselect the one furthest from the newly clicked
+        // 4. Images displayed in button order (left button = left image)
+        // 5. Button order (left to right): ours, linprim, dn-splatter, ground-truth
 
-        const DEFAULT_METHOD = 'ours'; // Easy to change default here
+        const METHOD_ORDER = ['ours', 'linprim', 'dn-splatter', 'ground-truth'];
+
+        // Get placeholder and help text elements
+        const placeholder = document.getElementById('comparison-placeholder');
+        const helpText = document.getElementById('comparison-help-text');
+
+        const updateComparisonView = () => {
+            const allButtons = Array.from(document.querySelectorAll('.comparison-methods .button'));
+            const selectedMethods = allButtons
+                .filter(b => b.classList.contains('is-selected'))
+                .map(b => b.dataset.method);
+
+            // Sort by METHOD_ORDER index (left to right)
+            selectedMethods.sort((a, b) => METHOD_ORDER.indexOf(a) - METHOD_ORDER.indexOf(b));
+
+            if (selectedMethods.length === 1) {
+                // Only one method selected - show placeholder and help text
+                this.leftMethod = selectedMethods[0];
+                this.rightMethod = null;
+
+                // Show placeholder and help text, hide slider
+                if (placeholder) placeholder.style.display = 'flex';
+                if (helpText) helpText.style.display = 'block';
+                if (this.slider) this.slider.style.display = 'none';
+                if (this.overlay) this.overlay.style.display = 'none';
+
+                // Update labels
+                this.updateLabels();
+
+                // Still show the single selected image as base
+                this.updateSingleImage();
+            } else if (selectedMethods.length === 2) {
+                // Two methods selected - show comparison, hide help text
+                this.leftMethod = selectedMethods[0];
+                this.rightMethod = selectedMethods[1];
+
+                // Hide placeholder and help text, show slider
+                if (placeholder) placeholder.style.display = 'none';
+                if (helpText) helpText.style.display = 'none';
+                if (this.slider) this.slider.style.display = 'block';
+                if (this.overlay) this.overlay.style.display = 'block';
+
+                this.updateImages();
+            }
+        };
 
         document.querySelectorAll('.comparison-methods .button:not(:disabled)').forEach(button => {
             button.addEventListener('click', () => {
                 const clickedMethod = button.dataset.method;
                 const isSelected = button.classList.contains('is-selected');
+                const selectedButtons = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
 
                 if (isSelected) {
-                    // Deselecting a button
-                    const selectedButtons = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-
-                    if (clickedMethod === DEFAULT_METHOD) {
-                        // User is deselecting "Ours" - allow it
+                    // DESELECTING a button
+                    // Only allow if more than 1 button is selected (minimum 1 must stay)
+                    if (selectedButtons.length > 1) {
                         button.classList.remove('is-selected');
-
-                        // If only one other button is selected, select another non-ours button
-                        const remaining = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-                        if (remaining.length < 2) {
-                            const allButtons = Array.from(document.querySelectorAll('.comparison-methods .button'));
-                            const nonSelected = allButtons.find(b => !b.classList.contains('is-selected'));
-                            if (nonSelected) {
-                                nonSelected.classList.add('is-selected');
-                            }
-                        }
-                    } else {
-                        // Deselecting a non-ours button
-                        button.classList.remove('is-selected');
-
-                        const oursButton = document.querySelector(`.comparison-methods .button[data-method="${DEFAULT_METHOD}"]`);
-                        const oursSelected = oursButton?.classList.contains('is-selected');
-
-                        if (!oursSelected) {
-                            // "Ours" is not selected, select it as default
-                            oursButton?.classList.add('is-selected');
-                        } else {
-                            // "Ours" is already selected, need to find another button
-                            const remaining = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-                            if (remaining.length < 2) {
-                                const allButtons = Array.from(document.querySelectorAll('.comparison-methods .button'));
-                                const nonSelected = allButtons.find(b =>
-                                    !b.classList.contains('is-selected') &&
-                                    b.dataset.method !== clickedMethod
-                                );
-                                if (nonSelected) {
-                                    nonSelected.classList.add('is-selected');
-                                }
-                            }
-                        }
                     }
+                    // If only 1 selected, do nothing (can't deselect the last one)
                 } else {
-                    // Selecting a button
-                    const selectedButtons = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-                    const oursButton = document.querySelector(`.comparison-methods .button[data-method="${DEFAULT_METHOD}"]`);
-                    const oursSelected = oursButton?.classList.contains('is-selected');
-
-                    if (clickedMethod === DEFAULT_METHOD) {
-                        // User is selecting "Ours"
+                    // SELECTING a button
+                    if (selectedButtons.length < 2) {
+                        // Less than 2 selected - just add this one
                         button.classList.add('is-selected');
-
-                        // If we now have more than 2, remove the oldest non-ours selection
-                        const newSelected = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-                        if (newSelected.length > 2) {
-                            const toRemove = newSelected.find(b => b.dataset.method !== DEFAULT_METHOD);
-                            if (toRemove) {
-                                toRemove.classList.remove('is-selected');
-                            }
-                        }
                     } else {
-                        // User is selecting a non-ours button
-                        if (!oursSelected) {
-                            // "Ours" is not selected, ensure it gets selected
-                            oursButton?.classList.add('is-selected');
-                            button.classList.add('is-selected');
+                        // Already 2 selected - need to deselect one first
+                        // Strategy: Deselect the button that is FURTHEST from the clicked button
+                        // This creates intuitive "sliding window" behavior
+                        const clickedIndex = METHOD_ORDER.indexOf(clickedMethod);
 
-                            // If we now have more than 2, remove the oldest non-ours, non-clicked selection
-                            const newSelected = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-                            if (newSelected.length > 2) {
-                                const toRemove = newSelected.find(b =>
-                                    b.dataset.method !== DEFAULT_METHOD &&
-                                    b.dataset.method !== clickedMethod
-                                );
-                                if (toRemove) {
-                                    toRemove.classList.remove('is-selected');
-                                }
-                            }
-                        } else {
-                            // "Ours" is already selected
-                            button.classList.add('is-selected');
+                        let maxDistance = -1;
+                        let buttonToRemove = null;
 
-                            // If we now have more than 2, remove the oldest non-ours, non-clicked selection
-                            const newSelected = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
-                            if (newSelected.length > 2) {
-                                const toRemove = newSelected.find(b =>
-                                    b.dataset.method !== DEFAULT_METHOD &&
-                                    b.dataset.method !== clickedMethod
-                                );
-                                if (toRemove) {
-                                    toRemove.classList.remove('is-selected');
-                                }
+                        selectedButtons.forEach(b => {
+                            const idx = METHOD_ORDER.indexOf(b.dataset.method);
+                            const distance = Math.abs(idx - clickedIndex);
+                            if (distance > maxDistance) {
+                                maxDistance = distance;
+                                buttonToRemove = b;
                             }
+                        });
+
+                        if (buttonToRemove) {
+                            buttonToRemove.classList.remove('is-selected');
                         }
+                        button.classList.add('is-selected');
                     }
                 }
 
-                // Update left and right methods based on selection
-                // IMPORTANT: If "Ours" is selected, it should ALWAYS be on the left
-                const allButtons = Array.from(document.querySelectorAll('.comparison-methods .button'));
-                const selectedButtons = allButtons.filter(b => b.classList.contains('is-selected'));
-
-                const oursButton = selectedButtons.find(b => b.dataset.method === DEFAULT_METHOD);
-                const otherButton = selectedButtons.find(b => b.dataset.method !== DEFAULT_METHOD);
-
-                if (oursButton) {
-                    // "Ours" is selected - it goes on the left
-                    this.leftMethod = DEFAULT_METHOD;
-                    this.rightMethod = otherButton?.dataset.method || 'linprim';
-                } else {
-                    // "Ours" is not selected - use DOM order for the two selected buttons
-                    this.leftMethod = selectedButtons[0]?.dataset.method || DEFAULT_METHOD;
-                    this.rightMethod = selectedButtons[1]?.dataset.method || 'linprim';
-                }
-
-                this.updateImages();
+                updateComparisonView();
             });
         });
 
@@ -668,6 +700,7 @@ class ImageComparisonSlider {
      */
     updateLabels() {
         const formatMethodName = (method) => {
+            if (!method) return '—';
             if (method === 'dn-splatter') return 'DN-Splatter';
             if (method === 'ground-truth') return 'Ground Truth';
             if (method === 'linprim') return 'LinPrim';
@@ -675,7 +708,21 @@ class ImageComparisonSlider {
         };
 
         this.labelLeft.textContent = formatMethodName(this.leftMethod);
-        this.labelRight.textContent = formatMethodName(this.rightMethod);
+        this.labelRight.textContent = this.rightMethod ? formatMethodName(this.rightMethod) : 'Select a method';
+    }
+
+    /**
+     * Update display when only one method is selected
+     */
+    updateSingleImage() {
+        const sceneData = comparisonData.scenes[this.currentScene];
+        if (!sceneData || !this.leftMethod) return;
+
+        const leftSrc = sceneData[this.currentModality][this.leftMethod];
+
+        if (leftSrc) {
+            this.baseImage.src = leftSrc;
+        }
     }
 }
 

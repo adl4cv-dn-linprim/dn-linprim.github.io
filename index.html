@@ -123,13 +123,8 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+            3D Gaussian Splatting (3DGS) has established a new standard for fast and efficient Novel View Synthesis (NVS). Building upon it, LinPrim introduced a way to incorporate geometrically bounded primitives in the form of polyhedra, leading to comparable results with 3DGS while requiring fewer primitives.
+            However, just as 3DGS, LinPrim solely relies on photometric supervision, leading to visual reconstructions that are high quality but lack geometric accuracy. We extend LinPrim by introducing dense geometric priors in the form of depth- and normal-regularization. We show that our method outperforms LinPrim in geometric accuracy while reaching parity with other geometrically-regularized 3DGS approaches and maintaining comparable photometric results to all.
         </div>
       </div>
     </div>
@@ -156,6 +151,8 @@
               <select id="scene-selector">
                 <option value="DSC00767">DSC00767 (39f36da05b)</option>
                 <option value="DSC00784">DSC00784 (39f36da05b)</option>
+                <option value="DSC00862">DSC00862 (dc263dfbf0)</option>
+                <option value="DSC00865">DSC00865 (dc263dfbf0)</option>
               </select>
             </div>
           </div>
@@ -189,11 +186,14 @@
 
     <!-- Method Selection Buttons -->
     <div class="buttons is-centered has-addons comparison-methods">
-      <button class="button is-selected" data-method="ours" disabled>Ours</button>
-      <button class="button is-selected" data-method="linprim">LinPrim</button>
+      <button class="button is-selected" data-method="ours">Ours</button>
+      <button class="button" data-method="linprim">LinPrim</button>
       <button class="button" data-method="dn-splatter">DN-Splatter</button>
       <button class="button" data-method="ground-truth">Ground Truth</button>
     </div>
+    <p id="comparison-help-text" class="has-text-centered is-size-7" style="color: #888; margin-top: -0.5rem; margin-bottom: 1rem;">
+      <i class="fas fa-info-circle"></i> Select two methods to compare. Drag the slider to reveal differences.
+    </p>
 
     <!-- Image Comparison Container -->
     <div class="comparison-container">
@@ -206,6 +206,13 @@
           <div class="slider-button">
             <i class="fas fa-chevron-left"></i>
             <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+        <!-- Placeholder shown when only one method is selected -->
+        <div class="comparison-placeholder" id="comparison-placeholder" style="display: none;">
+          <div class="placeholder-content">
+            <i class="fas fa-hand-pointer"></i>
+            <p>Select a second method to compare</p>
           </div>
         </div>
       </div>
@@ -233,9 +240,9 @@
         <div class="results-table-section" style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <h3 class="title is-4" style="margin-bottom: 1.5rem;">Average Results</h3>
 
-          <!-- Full Resolution Average -->
+          <!-- Complete Resolution Average -->
           <div style="margin-bottom: 2rem;">
-            <h4 class="title is-5" style="color: #363636; border-bottom: 2px solid #3273dc; padding-bottom: 0.5rem; margin-bottom: 1rem;">Full Resolution</h4>
+            <h4 class="title is-5" style="color: #363636; border-bottom: 2px solid #3273dc; padding-bottom: 0.5rem; margin-bottom: 1rem;">Complete Scene</h4>
             <div class="table-container">
               <table class="table is-striped is-hoverable">
                 <thead>
@@ -335,12 +342,12 @@
         <!-- Detailed Scene Results in Dropdowns -->
         <h3 class="title is-5" style="margin-bottom: 1rem; color: #7a7a7a;">Detailed Results by Scene</h3>
 
-        <!-- Full Resolution Results Dropdown -->
+        <!-- Complete Resolution Results Dropdown -->
         <div class="results-section-dropdown">
-          <button class="results-section-toggle" onclick="toggleResultsSection(this)">
-            <span>Full Resolution Results</span>
+          <button class="results-section-toggle collapsed" onclick="toggleResultsSection(this)">
+            <span>Complete Scene Results</span>
           </button>
-          <div class="results-section-content">
+          <div class="results-section-content collapsed">
 
         <!-- Scene 39f36da05b -->
         <div class="results-table-section">
@@ -587,9 +594,9 @@
           </div>
         </div>
 
-        <!-- Average for Full Resolution -->
+        <!-- Average for Complete Resolution -->
         <div class="results-table-section">
-          <h4 class="title is-5">Full Resolution - Average</h4>
+          <h4 class="title is-5">Complete Scene - Average</h4>
           <div class="table-container">
             <table class="table is-striped is-hoverable">
               <thead>
