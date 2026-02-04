@@ -456,12 +456,15 @@ class ImageComparisonSlider {
 
     /**
      * Update primitive tab visibility based on current scene and selected methods
+     * Also handles hiding DN-Splatter button when primitive modality is active
      */
     updatePrimitiveTabVisibility() {
         const PRIMITIVE_SCENES = ['DSC00862', 'DSC00865'];
         const PRIMITIVE_METHODS = ['ours', 'linprim', 'ground-truth'];
 
         const primitiveTab = document.getElementById('primitive-tab');
+        const dnSplatterButton = document.querySelector('.comparison-methods .button[data-method="dn-splatter"]');
+
         if (!primitiveTab) return;
 
         const isPrimitiveScene = PRIMITIVE_SCENES.includes(this.currentScene);
@@ -480,12 +483,29 @@ class ImageComparisonSlider {
 
         primitiveTab.style.display = showPrimitiveTab ? '' : 'none';
 
+        // Hide DN-Splatter button when primitive modality is active
+        if (dnSplatterButton) {
+            if (this.currentModality === 'primitive') {
+                dnSplatterButton.style.display = 'none';
+                // If DN-Splatter was selected, deselect it
+                if (dnSplatterButton.classList.contains('is-selected')) {
+                    dnSplatterButton.classList.remove('is-selected');
+                }
+            } else {
+                dnSplatterButton.style.display = '';
+            }
+        }
+
         // If primitive tab was active but is now hidden, switch to RGB
         if (!showPrimitiveTab && this.currentModality === 'primitive') {
             this.currentModality = 'rgb';
             document.querySelectorAll('#modality-tabs li').forEach(t => t.classList.remove('is-active'));
             const rgbTab = document.querySelector('#modality-tabs li[data-modality="rgb"]');
             if (rgbTab) rgbTab.classList.add('is-active');
+            // Show DN-Splatter button again when switching away from primitive
+            if (dnSplatterButton) {
+                dnSplatterButton.style.display = '';
+            }
             this.updateImages();
         }
     }
@@ -546,6 +566,10 @@ class ImageComparisonSlider {
                 document.querySelectorAll('#modality-tabs li').forEach(t => t.classList.remove('is-active'));
                 tab.classList.add('is-active');
                 this.currentModality = tab.dataset.modality;
+
+                // Update DN-Splatter button visibility when switching to/from primitive modality
+                this.updatePrimitiveTabVisibility();
+
                 this.updateImages();
             });
         });
@@ -616,7 +640,7 @@ class ImageComparisonSlider {
             selectedMethods.sort((a, b) => METHOD_ORDER.indexOf(a) - METHOD_ORDER.indexOf(b));
 
             // Update primitive tab visibility when methods change
-            updatePrimitiveTabVisibility();
+            this.updatePrimitiveTabVisibility();
 
             if (selectedMethods.length === 1) {
                 // Only one method selected - show placeholder and help text
