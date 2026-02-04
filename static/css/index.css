@@ -791,3 +791,42 @@ body {
         bottom: 8px;
     }
 }
+
+/* ============================================
+   Comparison Mode Tabs
+   ============================================ */
+#comparison-mode-tabs {
+    margin-bottom: 0;
+}
+
+#comparison-mode-tabs li a {
+    border-color: #dbdbdb;
+    color: #4a4a4a;
+    transition: all 0.2s ease;
+}
+
+#comparison-mode-tabs li.is-active a {
+    background-color: #3273dc;
+    border-color: #3273dc;
+    color: white;
+}
+
+#comparison-mode-tabs li:not(.is-active) a:hover {
+    background-color: #f5f5f5;
+    border-color: #b5b5b5;
+}
+
+.comparison-mode-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

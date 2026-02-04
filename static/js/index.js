@@ -751,9 +751,58 @@ class ImageComparisonSlider {
 }
 
 // ============================================
+// Comparison Mode Tab Switching
+// ============================================
+class ComparisonModeTabs {
+    constructor() {
+        this.tabsContainer = document.getElementById('comparison-mode-tabs');
+        this.overviewContent = document.getElementById('comparison-overview');
+        this.detailedContent = document.getElementById('comparison-detailed');
+
+        if (!this.tabsContainer) return;
+
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        const tabs = this.tabsContainer.querySelectorAll('li');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const mode = tab.getAttribute('data-mode');
+                this.switchMode(mode, tabs, tab);
+            });
+        });
+    }
+
+    switchMode(mode, allTabs, activeTab) {
+        // Update tab active states
+        allTabs.forEach(t => t.classList.remove('is-active'));
+        activeTab.classList.add('is-active');
+
+        // Show/hide content
+        if (mode === 'overview') {
+            this.overviewContent.style.display = 'block';
+            this.detailedContent.style.display = 'none';
+
+            // Reset quad slider position when switching to it
+            if (window.quadComparison) {
+                window.quadComparison.reset();
+            }
+        } else {
+            this.overviewContent.style.display = 'none';
+            this.detailedContent.style.display = 'block';
+        }
+    }
+}
+
+// ============================================
 // Initialize on DOM Ready
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the comparison mode tabs
+    new ComparisonModeTabs();
+
     // Initialize the 4-way quad comparison slider for teaser
     window.quadComparison = new QuadImageComparison('quad-comparison');
 
