@@ -373,6 +373,11 @@ const comparisonData = {
                 linprim: 'static/images/linprim/linprim_normals_DSC00862.png',
                 'dn-splatter': 'static/images/dn-splatter/dn_splatter_normals_DSC00862.jpg',
                 'ground-truth': 'static/images/ground-truth/gt_normals_DSC00862.png'
+            },
+            primitive: {
+                ours: 'static/images/ours_vis_dc263dfbf0.png',
+                linprim: 'static/images/linprim_vis_dc263dfbf0.png',
+                'ground-truth': 'static/images/gt_vis_dc263dfbf0.png'
             }
         },
         'DSC00865': {
@@ -393,6 +398,11 @@ const comparisonData = {
                 linprim: 'static/images/linprim/linprim_normals_DSC00865.png',
                 'dn-splatter': 'static/images/dn-splatter/dn_splatter_normals_DSC00865.jpg',
                 'ground-truth': 'static/images/ground-truth/gt_normals_DSC00865.png'
+            },
+            primitive: {
+                ours: 'static/images/ours_vis_dc263dfbf0.png',
+                linprim: 'static/images/linprim_vis_dc263dfbf0.png',
+                'ground-truth': 'static/images/gt_vis_dc263dfbf0.png'
             }
         }
     }
@@ -425,6 +435,9 @@ class ImageComparisonSlider {
         const placeholder = document.getElementById('comparison-placeholder');
         const helpText = document.getElementById('comparison-help-text');
 
+        // Initialize primitive tab visibility
+        this.updatePrimitiveTabVisibility();
+
         if (selectedButtons.length === 1) {
             // Only one method selected - show placeholder
             if (placeholder) placeholder.style.display = 'flex';
@@ -437,6 +450,42 @@ class ImageComparisonSlider {
             // Two methods selected - show comparison
             if (placeholder) placeholder.style.display = 'none';
             if (helpText) helpText.style.display = 'none';
+            this.updateImages();
+        }
+    }
+
+    /**
+     * Update primitive tab visibility based on current scene and selected methods
+     */
+    updatePrimitiveTabVisibility() {
+        const PRIMITIVE_SCENES = ['DSC00862', 'DSC00865'];
+        const PRIMITIVE_METHODS = ['ours', 'linprim', 'ground-truth'];
+
+        const primitiveTab = document.getElementById('primitive-tab');
+        if (!primitiveTab) return;
+
+        const isPrimitiveScene = PRIMITIVE_SCENES.includes(this.currentScene);
+
+        // Get currently selected methods
+        const selectedButtons = Array.from(document.querySelectorAll('.comparison-methods .button.is-selected'));
+        const selectedMethods = selectedButtons.map(b => b.dataset.method);
+
+        // Check if all selected methods support primitive visualization
+        const allMethodsSupportPrimitive = selectedMethods.every(m => PRIMITIVE_METHODS.includes(m));
+
+        // Show primitive tab only if:
+        // 1. Current scene has primitive data
+        // 2. All selected methods support primitive visualization (i.e., NOT dn-splatter)
+        const showPrimitiveTab = isPrimitiveScene && allMethodsSupportPrimitive && selectedMethods.length > 0;
+
+        primitiveTab.style.display = showPrimitiveTab ? '' : 'none';
+
+        // If primitive tab was active but is now hidden, switch to RGB
+        if (!showPrimitiveTab && this.currentModality === 'primitive') {
+            this.currentModality = 'rgb';
+            document.querySelectorAll('#modality-tabs li').forEach(t => t.classList.remove('is-active'));
+            const rgbTab = document.querySelector('#modality-tabs li[data-modality="rgb"]');
+            if (rgbTab) rgbTab.classList.add('is-active');
             this.updateImages();
         }
     }
@@ -482,6 +531,7 @@ class ImageComparisonSlider {
         if (sceneSelector) {
             sceneSelector.addEventListener('change', (e) => {
                 this.currentScene = e.target.value;
+                this.updatePrimitiveTabVisibility();
                 this.updateImages();
             });
         }
@@ -490,6 +540,9 @@ class ImageComparisonSlider {
         document.querySelectorAll('#modality-tabs li').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 e.preventDefault();
+                // Don't allow clicking hidden tabs
+                if (tab.style.display === 'none') return;
+
                 document.querySelectorAll('#modality-tabs li').forEach(t => t.classList.remove('is-active'));
                 tab.classList.add('is-active');
                 this.currentModality = tab.dataset.modality;
@@ -561,6 +614,9 @@ class ImageComparisonSlider {
 
             // Sort by METHOD_ORDER index (left to right)
             selectedMethods.sort((a, b) => METHOD_ORDER.indexOf(a) - METHOD_ORDER.indexOf(b));
+
+            // Update primitive tab visibility when methods change
+            updatePrimitiveTabVisibility();
 
             if (selectedMethods.length === 1) {
                 // Only one method selected - show placeholder and help text
@@ -674,8 +730,21 @@ class ImageComparisonSlider {
             return;
         }
 
-        const leftSrc = sceneData[this.currentModality][this.leftMethod];
-        const rightSrc = sceneData[this.currentModality][this.rightMethod];
+        // Check if the current modality exists for this scene
+        const modalityData = sceneData[this.currentModality];
+        if (!modalityData) {
+            console.error(`Modality ${this.currentModality} not found for scene ${this.currentScene}`);
+            return;
+        }
+
+        const leftSrc = modalityData[this.leftMethod];
+        const rightSrc = modalityData[this.rightMethod];
+
+        // Check if methods have images for this modality (e.g., primitive doesn't exist for dn-splatter)
+        if (!leftSrc || !rightSrc) {
+            console.warn(`Method does not have images for ${this.currentModality} modality`);
+            return;
+        }
 
         // HTML structure explanation:
         // - base-image is always visible underneath
@@ -742,7 +811,10 @@ class ImageComparisonSlider {
         const sceneData = comparisonData.scenes[this.currentScene];
         if (!sceneData || !this.leftMethod) return;
 
-        const leftSrc = sceneData[this.currentModality][this.leftMethod];
+        const modalityData = sceneData[this.currentModality];
+        if (!modalityData) return;
+
+        const leftSrc = modalityData[this.leftMethod];
 
         if (leftSrc) {
             this.baseImage.src = leftSrc;
